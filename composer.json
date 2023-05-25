@@ -1,5 +1,5 @@
 {
-    "name": "codedge/laravel-selfupdater",
+    "name": "amir2539/laravel-selfupdater",
     "description": "Providing an auto-updating functionality for your self-hosted Laravel application.",
     "license": "MIT",
     "keywords": [
@@ -21,8 +21,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/codedge/laravel-selfupdater/issues",
-        "source": "https://github.com/codedge/laravel-selfupdater"
+        "issues": "https://github.com/amir2539/laravel-selfupdater/issues",
+        "source": "https://github.com/amir2539/laravel-selfupdater"
     },
     "require": {
         "php": "^8.1",
