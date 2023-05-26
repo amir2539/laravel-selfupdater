@@ -29,7 +29,7 @@
         "ext-json": "*",
         "ext-zip": "*",
         "guzzlehttp/guzzle": "^7.5.0",
-        "illuminate/support": "^10",
+        "illuminate/support": "^9",
         "league/uri": "~6.7 || ~6.8",
         "phpstan/extension-installer": "^1.2",
         "phpstan/phpstan-phpunit": "^1.2"
