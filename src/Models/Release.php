@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1)
+;
 
 namespace Codedge\Updater\Models;
 
@@ -80,7 +81,7 @@ final class Release
     public function updateStoragePath(): self
     {
         if (!empty($this->getRelease())) {
-            $this->storagePath = Str::finish($this->storagePath, DIRECTORY_SEPARATOR).$this->getRelease();
+            $this->storagePath = Str::finish($this->storagePath, DIRECTORY_SEPARATOR) . $this->getRelease();
 
             return $this;
         }
@@ -145,7 +146,8 @@ final class Release
             }
 
             return true;
-        } else {
+        }
+        else {
             throw ReleaseException::archiveNotAZipFile(File::mimeType($this->getStoragePath()));
         }
     }
@@ -179,11 +181,12 @@ final class Release
             ];
         }
 
-        return Http::withHeaders($headers)
-                   ->withOptions([
-                       'sink' => $this->getStoragePath(),
-                   ])
-                   ->get($this->getDownloadUrl());
+        return Http::timeout(200)
+            ->withHeaders($headers)
+            ->withOptions([
+            'sink' => $this->getStoragePath(),
+        ])
+            ->get($this->getDownloadUrl());
     }
 
     /**
@@ -198,7 +201,7 @@ final class Release
             // Only one sub-folder inside extracted directory
             $moved = File::moveDirectory(
                 $folders[0],
-                createFolderFromFile($this->getStoragePath()).now()->toDateString()
+                createFolderFromFile($this->getStoragePath()) . now()->toDateString()
             );
 
             if (!$moved) {
@@ -206,7 +209,7 @@ final class Release
             }
 
             File::moveDirectory(
-                createFolderFromFile($this->getStoragePath()).now()->toDateString(),
+                createFolderFromFile($this->getStoragePath()) . now()->toDateString(),
                 createFolderFromFile($this->getStoragePath()),
                 true
             );
@@ -226,19 +229,19 @@ final class Release
 
         // Check if source archive is (probably) deleted but extracted folder is there.
         if (!File::exists($this->getStoragePath())
-            && File::exists($extractionDir)) {
+        && File::exists($extractionDir)) {
             return true;
         }
 
         // Check if source archive is there but not extracted
         if (File::exists($this->getStoragePath())
-            && !File::exists($extractionDir)) {
+        && !File::exists($extractionDir)) {
             return true;
         }
 
         // Check if source archive and folder exists
         if (File::exists($this->getStoragePath())
-            && File::exists($extractionDir)) {
+        && File::exists($extractionDir)) {
             return true;
         }
 

@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1)
+;
 
 namespace Codedge\Updater\SourceRepositoryTypes;
 
@@ -43,8 +44,8 @@ class HttpRepositoryType implements SourceRepositoryTypeContract
 
         $this->release = resolve(Release::class);
         $this->release->setStoragePath(Str::finish($this->config['download_path'], DIRECTORY_SEPARATOR))
-                      ->setUpdatePath(base_path(), config('self-update.exclude_folders'))
-                      ->setAccessToken($this->config['private_access_token']);
+            ->setUpdatePath(base_path(), config('self-update.exclude_folders'))
+            ->setAccessToken($this->config['private_access_token']);
 
         $this->updateExecutor = $updateExecutor;
     }
@@ -93,10 +94,10 @@ class HttpRepositoryType implements SourceRepositoryTypeContract
 
         $release = $this->selectRelease($releaseCollection, $version);
 
-        $this->release->setVersion($this->prepend.$release->name.$this->append)
-                      ->setRelease($this->prepend.$release->name.$this->append.'.zip')
-                      ->updateStoragePath()
-                      ->setDownloadUrl($release->zipball_url);
+        $this->release->setVersion($this->prepend . $release->name . $this->append)
+            ->setRelease($this->prepend . $release->name . $this->append . '.zip')
+            ->updateStoragePath()
+            ->setDownloadUrl($release->zipball_url);
 
         if (!$this->release->isSourceAlreadyFetched()) {
             $this->release->download();
@@ -113,8 +114,9 @@ class HttpRepositoryType implements SourceRepositoryTypeContract
         if (!empty($version)) {
             if ($collection->contains('name', $version)) {
                 $release = $collection->where('name', $version)->first();
-            } else {
-                Log::info('No release for version "'.$version.'" found. Selecting latest.');
+            }
+            else {
+                Log::info('No release for version "' . $version . '" found. Selecting latest.');
             }
         }
 
@@ -134,7 +136,7 @@ class HttpRepositoryType implements SourceRepositoryTypeContract
      */
     public function getVersionInstalled(): string
     {
-        return (string) config('self-update.version_installed');
+        return (string)config('self-update.version_installed');
     }
 
     /**
@@ -150,7 +152,8 @@ class HttpRepositoryType implements SourceRepositoryTypeContract
     {
         if ($this->versionFileExists()) {
             $version = $this->getVersionFile();
-        } else {
+        }
+        else {
             $releaseCollection = $this->extractFromHtml($this->getReleases()->body());
             $version = $releaseCollection->last()->name;
         }
@@ -182,10 +185,10 @@ class HttpRepositoryType implements SourceRepositoryTypeContract
      */
     public function extractFromHtml(string $content): Collection
     {
-        $format = str_replace('_VERSION_', '(\d+\.\d+\.\d+)', $this->config['pkg_filename_format']).'.zip';
-        $linkPattern = 'a.*href="(.*'.$format.')"';
+        $format = str_replace('_VERSION_', '(\d+\.\d+\.\d+)', $this->config['pkg_filename_format']) . '.zip';
+        $linkPattern = 'a.*href="(.*' . $format . ')"';
 
-        preg_match_all('<'.$linkPattern.'>i', $content, $files);
+        preg_match_all('<' . $linkPattern . '>i', $content, $files);
         $files = array_filter($files);
 
         if (count($files) === 0) {
@@ -194,7 +197,7 @@ class HttpRepositoryType implements SourceRepositoryTypeContract
 
         // Special handling when file version cannot be properly detected
         if (!array_key_exists(2, $files)) {
-            foreach ($files[1] as $key=>$val) {
+            foreach ($files[1] as $key => $val) {
                 preg_match('/[a-zA-Z\-]([.\d]*)(?=\.\w+$)/', $val, $versions);
                 $files[][$key] = $versions[1];
             }
@@ -203,15 +206,15 @@ class HttpRepositoryType implements SourceRepositoryTypeContract
         $releaseVersions = array_combine($files[2], $files[1]);
 
         $uri = Uri::createFromString($this->config['repository_url']);
-        $baseUrl = $uri->getScheme().'://'.$uri->getHost().'/'.$uri->getPath();
+        $baseUrl = $uri->getScheme() . '://' . $uri->getHost();
 
         $releases = collect($releaseVersions)->map(function ($item, $key) use ($baseUrl) {
             $uri = Uri::createFromString($item);
-            $item = $uri->getHost() ? $item : $baseUrl.Str::start($item, '/');
+            $item = $uri->getHost() ? $item : $baseUrl . Str::start($item, '/');
 
-            return (object) [
-                'name'        => $key,
-                'zipball_url' => $item,
+            return (object)[
+            'name' => $key,
+            'zipball_url' => $item,
             ];
         });
 
